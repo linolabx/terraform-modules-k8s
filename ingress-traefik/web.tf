@@ -83,7 +83,12 @@ resource "kubernetes_ingress_v1" "this" {
   }
 }
 
-output "service_host" {
+output "service_hostname" {
+  value       = "${local.service.name}.${var.namespace}.svc.cluster.local"
+  description = "service hostname used in kubernetes, e.g. srv-name.namespace.svc.cluster.local"
+}
+
+output "service_hostport" {
   value       = "${local.service.name}.${var.namespace}.svc.cluster.local:${var.app.port}"
-  description = "service host used in kubernetes"
+  description = "service host and port used in kubernetes, e.g. srv-name.namespace.svc.cluster.local:8080"
 }
