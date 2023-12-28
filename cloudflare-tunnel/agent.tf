@@ -7,22 +7,25 @@ variable "agent" {
   default = null
 }
 
+resource "random_pet" "app_suffix" {}
+locals { app = "cloudflared-${random_pet.app_suffix.id}" }
+
 resource "kubernetes_deployment" "cloudflared" {
   count = var.agent != null ? 1 : 0
 
   metadata {
     name      = "cloudflared"
     namespace = var.agent.namespace
-    labels    = { app = "cloudflared" }
+    labels    = { app = local.app }
   }
 
   spec {
     replicas = var.agent.replicas
 
-    selector { match_labels = { pod = "cloudflared" } }
+    selector { match_labels = { app = local.app } }
 
     template {
-      metadata { labels = { pod = "cloudflared" } }
+      metadata { labels = { app = local.app } }
 
       spec {
         node_selector = var.agent.node_selector
@@ -58,13 +61,13 @@ resource "kubernetes_service" "cloudflared" {
   count = var.agent != null ? 1 : 0
 
   metadata {
-    name      = "cloudflared"
+    name      = local.app
     namespace = var.agent.namespace
-    labels    = { app = "cloudflared" }
+    labels    = { app = local.app }
   }
 
   spec {
-    selector = { pod = "cloudflared" }
+    selector = { app = local.app }
     port {
       name        = "metrics"
       port        = 80
