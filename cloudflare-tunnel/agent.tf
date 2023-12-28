@@ -14,7 +14,7 @@ resource "kubernetes_deployment" "cloudflared" {
   count = var.agent != null ? 1 : 0
 
   metadata {
-    name      = "cloudflared"
+    name      = local.app
     namespace = var.agent.namespace
     labels    = { app = local.app }
   }
