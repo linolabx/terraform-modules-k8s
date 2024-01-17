@@ -88,6 +88,11 @@ output "service_hostname" {
   description = "service hostname used in kubernetes, e.g. srv-name.namespace.svc.cluster.local"
 }
 
+output "service_port" {
+  value       = var.app.port
+  description = "service port used in kubernetes, e.g. 8080"
+}
+
 output "service_hostport" {
   value       = "${local.service.name}.${var.namespace}.svc.cluster.local:${var.app.port}"
   description = "service host and port used in kubernetes, e.g. srv-name.namespace.svc.cluster.local:8080"
