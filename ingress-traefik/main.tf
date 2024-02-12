@@ -55,3 +55,8 @@ variable "cors" {
   })
   default = null
 }
+
+variable "redirect_https" {
+  type    = bool
+  default = false
+}

@@ -36,9 +36,28 @@ resource "kubernetes_manifest" "cors" {
   }
 }
 
+resource "kubectl_manifest" "redirect_https" {
+  count = var.redirect_https == null ? 0 : 1
+  manifest = {
+    apiVersion = "traefik.containo.us/v1alpha1"
+    kind       = "Middleware"
+    metadata = {
+      namespace = var.namespace
+      name      = "${local.service.name}-redirect-https"
+    }
+    spec = {
+      redirectScheme = {
+        scheme    = "https"
+        permanent = true
+      }
+    }
+  }
+}
+
 locals {
   middlewares = compact([
     var.cors == null ? "" : "${var.namespace}-${kubernetes_manifest.cors[0].manifest.metadata.name}@kubernetescrd",
+    var.redirect_https == null ? "" : "${var.namespace}-${kubectl_manifest.redirect_https[0].manifest.metadata.name}@kubernetescrd",
   ])
 
   middleware_annotations = merge(
