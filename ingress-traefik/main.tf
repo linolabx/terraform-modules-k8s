@@ -12,17 +12,13 @@ variable "namespace" {
   description = "namespace to deploy to"
 }
 
-variable "create_service" {
-  type        = bool
-  default     = true
-  description = "create a service for the app, if false, 'service' variable is required, if true, 'app' variable is required"
-}
-
 variable "app" {
   type = object({
     name = string
     port = number
   })
+  default     = null
+  description = "this module will create a service for the app, ignored if `service` variable is provided"
 }
 
 variable "service" {
@@ -30,11 +26,11 @@ variable "service" {
     name      = string
     port_name = string
   })
-  description = "service to use for ingress"
+  description = "service to use for ingress, if provided, `app` variable is ignored"
   default     = null
 }
 locals {
-  service = var.create_service ? {
+  service = var.service == null ? {
     name      = "${var.app.name}-svc"
     port_name = "http"
   } : var.service

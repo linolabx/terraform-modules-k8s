@@ -1,5 +1,5 @@
 resource "kubernetes_service" "this" {
-  count = var.create_service ? 1 : 0
+  count = var.service == null ? 1 : 0
   metadata {
     namespace = var.namespace
     name      = local.service.name
@@ -108,11 +108,11 @@ output "service_hostname" {
 }
 
 output "service_port" {
-  value       = var.app.port
+  value       = var.service == null ? null : var.app.port
   description = "service port used in kubernetes, e.g. 8080"
 }
 
 output "service_hostport" {
-  value       = "${local.service.name}.${var.namespace}.svc.cluster.local:${var.app.port}"
+  value       = var.service == null ? null : "${local.service.name}.${var.namespace}.svc.cluster.local:${var.app.port}"
   description = "service host and port used in kubernetes, e.g. srv-name.namespace.svc.cluster.local:8080"
 }
