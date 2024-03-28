@@ -37,7 +37,7 @@ resource "kubernetes_manifest" "cors" {
 }
 
 resource "kubernetes_manifest" "redirect_https" {
-  count = var.redirect_https == null ? 0 : 1
+  count = var.redirect_https ? 1 : 0
   manifest = {
     apiVersion = "traefik.containo.us/v1alpha1"
     kind       = "Middleware"
@@ -102,7 +102,7 @@ resource "kubernetes_ingress_v1" "this" {
               dynamic "port" {
                 for_each = local.service_port_name == null ? [] : [1]
                 content {
-                  number = local.service_port_name
+                  name = local.service_port_name
                 }
               }
             }
