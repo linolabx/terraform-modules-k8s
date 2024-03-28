@@ -7,7 +7,7 @@ resource "kubernetes_service" "this" {
 
   spec {
     port {
-      name = local.service.port_name
+      name = local.service_port_name
       port = var.app.port
     }
 
@@ -57,7 +57,7 @@ resource "kubernetes_manifest" "redirect_https" {
 locals {
   middlewares = compact([
     var.cors == null ? "" : "${var.namespace}-${kubernetes_manifest.cors[0].manifest.metadata.name}@kubernetescrd",
-    var.redirect_https == null ? "" : "${var.namespace}-${kubernetes_manifest.redirect_https[0].manifest.metadata.name}@kubernetescrd",
+    !var.redirect_https ? "" : "${var.namespace}-${kubernetes_manifest.redirect_https[0].manifest.metadata.name}@kubernetescrd",
   ])
 
   middleware_annotations = merge(
@@ -93,7 +93,18 @@ resource "kubernetes_ingress_v1" "this" {
           backend {
             service {
               name = local.service.name
-              port { name = local.service.port_name }
+              dynamic "port" {
+                for_each = local.service_port_number == null ? [] : [1]
+                content {
+                  number = local.service_port_number
+                }
+              }
+              dynamic "port" {
+                for_each = local.service_port_name == null ? [] : [1]
+                content {
+                  number = local.service_port_name
+                }
+              }
             }
           }
         }

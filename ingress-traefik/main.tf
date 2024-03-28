@@ -23,17 +23,20 @@ variable "app" {
 
 variable "service" {
   type = object({
-    name      = string
-    port_name = string
+    name = string
+    port = map(any)
   })
   description = "service to use for ingress, if provided, `app` variable is ignored"
   default     = null
 }
 locals {
   service = var.service == null ? {
-    name      = "${var.app.name}-svc"
-    port_name = "http"
+    name = "${var.app.name}-svc"
+    port = { name = "http" }
   } : var.service
+
+  service_port_name   = lookup(local.service.port, "name", null)
+  service_port_number = lookup(local.service.port, "number", null)
 }
 
 variable "domain" { type = string }
