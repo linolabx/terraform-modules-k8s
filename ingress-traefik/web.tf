@@ -78,31 +78,36 @@ resource "kubernetes_ingress_v1" "this" {
   }
 
   spec {
-    tls {
-      hosts       = var.tls.hosts
-      secret_name = var.tls.secret_name
+    dynamic "tls" {
+      for_each = var.tls
+      content {
+        hosts       = tls.value.hosts
+        secret_name = tls.value.secret_name
+      }
     }
 
-    rule {
-      host = var.domain
-
-      http {
-        path {
-          path      = "/"
-          path_type = "Prefix"
-          backend {
-            service {
-              name = local.service.name
-              dynamic "port" {
-                for_each = local.service_port_number == null ? [] : [1]
-                content {
-                  number = local.service_port_number
+    dynamic "rule" {
+      for_each = local.domains
+      content {
+        host = rule.value
+        http {
+          path {
+            path      = "/"
+            path_type = "Prefix"
+            backend {
+              service {
+                name = local.service.name
+                dynamic "port" {
+                  for_each = local.service_port_number == null ? [] : [1]
+                  content {
+                    number = local.service_port_number
+                  }
                 }
-              }
-              dynamic "port" {
-                for_each = local.service_port_name == null ? [] : [1]
-                content {
-                  name = local.service_port_name
+                dynamic "port" {
+                  for_each = local.service_port_name == null ? [] : [1]
+                  content {
+                    name = local.service_port_name
+                  }
                 }
               }
             }

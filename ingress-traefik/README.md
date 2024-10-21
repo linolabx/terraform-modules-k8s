@@ -15,9 +15,9 @@ module "lotus_ingress" {
 
   domain = "api.staging.example.com"
   issuer = "letsencrypt-prod"
-  tls    = {
+  tls    = [{
     secret_name = "example-tls"
     hosts       = ["*.staging.example.com", "*.example.com"]
-  }
+  }]
 }
 ```
