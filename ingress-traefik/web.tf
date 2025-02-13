@@ -70,7 +70,7 @@ locals {
 resource "kubernetes_ingress_v1" "this" {
   metadata {
     namespace = var.namespace
-    name      = "${local.service.name}-ingress"
+    name      = "${local.service.name}-${local.service_port_name == null ? local.service_port_number : local.service_port_name}-ingress"
     annotations = merge({
       "cert-manager.io/cluster-issuer" = var.issuer
       "kubernetes.io/ingress.class"    = "traefik"
