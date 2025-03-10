@@ -4,7 +4,7 @@ create local volume on specific-host
 
 ```tf
 module "lotus_volume" {
-  source = "github.com/linolabx/terraform-modules-k8s//local-volume"
+  source = "github.com/linolabx/terraform-modules-k8s?ref=local-volume@v0.0.1"
 
   namespace        = "staging"
   name             = "mysql-data-vol"

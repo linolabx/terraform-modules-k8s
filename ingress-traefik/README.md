@@ -4,7 +4,7 @@ create traefik ingress which cert-manager tls set up
 
 ```hcl
 module "lotus_ingress" {
-  source = "github.com/linolabx/terraform-modules-k8s//ingress-traefik"
+  source = "github.com/linolabx/terraform-modules-k8s?ref=ingress-traefik@v0.0.1"
 
   namespace = "staging"
 
