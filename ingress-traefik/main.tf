@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "~> 2.0"
     }
+    corefunc = {
+      source  = "northwood-labs/corefunc"
+      version = "~> 1.0"
+    }
   }
 }
 
@@ -70,6 +74,12 @@ locals {
 }
 
 variable "issuer" { type = string }
+
+variable "issuer_kind" {
+  type    = string
+  default = "cluster-issuer"
+}
+
 variable "tls" { type = list(object({
   hosts       = list(string)
   secret_name = string

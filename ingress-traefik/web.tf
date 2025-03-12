@@ -72,8 +72,9 @@ resource "kubernetes_ingress_v1" "this" {
     namespace = var.namespace
     name      = "${local.service.name}-${local.service_port_name == null ? local.service_port_number : local.service_port_name}-ingress"
     annotations = merge({
-      "cert-manager.io/cluster-issuer" = var.issuer
-      "kubernetes.io/ingress.class"    = "traefik"
+      "cert-manager.io/${provider::corefunc::str_kebab(var.issuer_kind)}" = var.issuer
+
+      "kubernetes.io/ingress.class" = "traefik"
     }, local.middleware_annotations)
   }
 
